@@ -1,0 +1,2645 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>안재경의 자수성가 스토리</title>
+    <style>
+        /* Basic Reset & Font */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Using Inter font with fallbacks */
+        }
+
+        /* Body Styling - Fixed background, no scroll */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Prevent body scroll */
+        }
+
+        /* App Container - Main wrapper for the mobile app look */
+        .app-container {
+            max-width: 414px; /* Typical mobile width for consistent frame */
+            width: 100%; /* Ensures it takes full width on smaller screens */
+            min-height: 100vh;
+            margin: 0 auto; /* Center the container */
+            background: #ffffff;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Keep hidden for pages, but content inside pages can scroll */
+        }
+
+        /* Status Header - Sticky at the top */
+        .status-header {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.5) 0%, rgba(118, 75, 162, 0.5) 100%); /* More translucent background */
+            color: white;
+            padding: 10px 16px 8px; /* More compact padding */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px); /* Keep blur for frosted effect */
+        }
+
+        .app-title {
+            font-size: 1em; /* Slightly smaller title */
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px; /* More compact margin */
+            opacity: 0.95;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns for compact display */
+            gap: 4px; /* More compact gap */
+            font-size: 0.75em; /* Smaller font size */
+        }
+
+        .status-item {
+            background: rgba(255,255,255,0.1); /* More translucent */
+            padding: 5px 6px; /* More compact padding */
+            border-radius: 8px; /* Smaller border-radius */
+            backdrop-filter: blur(3px); /* Subtle blur */
+            text-align: center; /* Center align text in status items */
+        }
+
+        .status-label {
+            opacity: 0.8;
+            font-size: 0.65em; /* Even smaller label */
+            margin-bottom: 1px;
+        }
+
+        .status-value {
+            font-weight: 600;
+            font-size: 0.75em; /* Smaller value font size */
+        }
+
+        /* Action Buttons - Sticky at the bottom */
+        .action-buttons {
+            background: white;
+            padding: 12px 16px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto; /* Allow horizontal scroll if many buttons */
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+            justify-content: center; /* Center align these buttons */
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap; /* Prevent wrapping */
+            font-weight: 500;
+        }
+
+        .action-btn:hover, .action-btn:active {
+            border-color: #667eea;
+            color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-1px);
+        }
+
+        /* Page Management */
+        .page {
+            display: flex; /* Always flex, but hidden by transform/opacity */
+            flex-direction: column;
+            flex: 1; /* Take remaining vertical space */
+            height: 100%; /* Ensure page fills its container */
+            position: absolute; /* Position absolutely within app-container */
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: transform 0.3s ease-out; /* Slide transition */
+            transform: translateX(100%); /* Default: off-screen to the right */
+        }
+
+        .page.active {
+            display: flex;
+            transform: translateX(0); /* Active: on-screen */
+        }
+
+        /* Override initial state for the first active page */
+        #gamePage {
+            transform: translateX(0); /* Start #gamePage visible */
+        }
+
+        .page-header {
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #667eea;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 12px;
+        }
+
+        .page-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .page-content {
+            flex: 1;
+            padding: 16px;
+            background: #f8f9fa;
+            overflow-y: auto; /* Allow content scroll within the page */
+        }
+
+        /* Main Content Area for Game Page - Holds background image and overlays */
+        .main-content {
+            flex-grow: 1; /* Allow main-content to grow and fill remaining space */
+            position: relative; /* For absolute positioning of overlays */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            display: flex; /* Use flexbox to layer elements */
+            flex-direction: column; /* Stack elements vertically */
+            overflow-y: auto; /* Allow main content to scroll */
+        }
+
+        /* House Name Overlay - Positioned over the main content background */
+        .house-name-overlay {
+            position: absolute;
+            top: 65px; /* Adjusted to be below status-header */
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            background: rgba(255,255,255,0.9); /* Slightly transparent for effect */
+            backdrop-filter: blur(5px);
+            padding: 8px 12px; /* Smaller padding */
+            border-radius: 12px; /* Smaller border-radius */
+            text-align: center;
+            font-weight: 600;
+            color: #495057;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Smaller shadow */
+            z-index: 90; /* Lower than action buttons, higher than main content */
+            font-size: 0.8em; /* Smaller font size */
+        }
+
+        /* Story Overlay (Modal for episode text and choices) */
+        .story-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent; /* Changed to transparent, removing dark overlay */
+            display: none; /* Hidden by default */
+            flex-direction: column; /* Stack story content and choices */
+            justify-content: flex-end; /* Align content to bottom */
+            z-index: 100; /* Higher than house name overlay */
+            padding: 16px; /* Padding for the whole overlay content */
+        }
+
+        .story-content-wrapper {
+            flex: 1; /* Take up remaining space, pushing choices to bottom */
+            display: flex;
+            align-items: center; /* Center story text vertically */
+            justify-content: center;
+            padding-bottom: 10px; /* Reduced space between text and choices */
+            overflow-y: auto; /* Allow story text to scroll if too long */
+        }
+
+        .story-content {
+            background: rgba(255,255,255,0.7); /* Changed to 70% opaque for more transparency */
+            padding: 10px; /* Further adjusted padding for smaller screens */
+            border-radius: 20px;
+            max-height: unset; /* Allow content to expand vertically */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            text-align: center;
+            font-size: 0.85em; /* Adjusted font size for main text */
+        }
+
+        /* Episode Subtitle */
+        .story-subtitle {
+            font-size: 0.95em; /* Adjusted font size */
+            font-weight: 700;
+            color: #34495e;
+            margin-bottom: 5px; /* Adjusted margin */
+            border-bottom: 1px solid #e9ecef; /* Visual separation */
+            padding-bottom: 2px; /* Adjusted padding */
+            margin-top: 2px; /* Adjusted margin */
+        }
+
+        /* Choices Container within the overlay */
+        .choices-container {
+            background: rgba(255,255,255,0.7); /* Changed to 70% opaque for more transparency */
+            padding: 5px 10px; /* Reduced vertical padding */
+            border-radius: 16px; /* Rounded corners for the choice block */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 5px; /* Reduced space between story content and choices */
+        }
+
+        .choices-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2px; /* Reduced gap for more compact choices */
+        }
+
+        .choice-btn {
+            background: white; /* Solid white for clarity */
+            border: 1px solid #e9ecef; /* Lighter border */
+            padding: 5px 10px; /* Further reduced vertical padding */
+            border-radius: 10px; /* Slightly smaller border-radius */
+            font-size: 0.7em; /* Further smaller font size */
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            line-height: 1.4;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
+        }
+
+        .choice-btn:hover, .choice-btn:active {
+            border-color: #667eea;
+            background: #f0f4ff; /* Lighter hover background */
+            color: #495057;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* House Cards in House Page */
+        .house-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .house-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .house-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .house-card.affordable {
+            border-color: #28a745;
+        }
+
+        .house-card.expensive {
+            border-color: #dc3545;
+            opacity: 0.7;
+        }
+
+        .house-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .house-card.owned {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+        }
+
+        .house-price {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .affordable .house-price { color: #28a745; }
+        .expensive .house-price { color: #dc3545; }
+        .locked .house-price { color: #6c757d; }
+        .owned .house-price { color: #ffc107; }
+
+        .house-monthly {
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+        }
+
+        .house-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .house-description {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+        }
+
+        .house-buffs {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+
+        .buff-item {
+            color: #667eea;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin: 4px 0;
+        }
+
+        .house-status {
+            font-weight: 600;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        /* Bank Page */
+        .loan-option {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .loan-option:hover {
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        .loan-option.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loan-amount {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .loan-terms {
+            color: #6c757d;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        /* Asset Page */
+        .asset-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .asset-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .asset-item {
+            text-align: center;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .asset-positive {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .asset-negative {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .asset-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .asset-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .net-worth {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+        }
+
+        .net-worth.positive {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .net-worth.negative {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .progress-chart {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .chart-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .chart-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        /* KakaoTalk Modal */
+        .kakao-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex; /* Always flex, hidden by opacity/visibility */
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .kakao-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+
+        .kakao-phone {
+            width: 350px;
+            height: 600px;
+            background: #000;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; /* Added for flex layout */
+            flex-direction: column; /* Added for flex layout */
+        }
+
+        .kakao-screen {
+            width: 100%;
+            height: 100%;
+            background: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kakao-status-bar {
+            background: #000;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.8em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .kakao-header {
+            background: #fee500;
+            color: #381e1e;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kakao-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #381e1e;
+        }
+
+        .kakao-messages {
+            flex: 1; /* Allow messages to take available space */
+            padding: 20px 15px;
+            overflow-y: auto; /* Enable scrolling for messages */
+            background: #b2c7da;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .kakao-message {
+            margin: 8px 0;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .kakao-message.received {
+            align-self: flex-start;
+        }
+
+        .kakao-message.sent {
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .sender-name {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 12px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+
+        .kakao-message.received .message-bubble {
+            background: #fff;
+            color: #333;
+        }
+
+        .kakao-message.sent .message-bubble {
+            background: #fee500;
+            color: #381e1e;
+        }
+
+        .timestamp {
+            font-size: 0.7em;
+            color: #999;
+            margin-top: 3px;
+        }
+
+        /* Random Event */
+        .random-event {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px auto; /* Center the block */
+            text-align: center;
+            font-weight: 600;
+            animation: eventPulse 0.8s ease-in-out infinite alternate; /* Continuous pulse */
+            border: 3px solid #fff; /* Stronger white border */
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.7); /* Glowing effect */
+            max-width: 80%; /* Limit width */
+        }
+
+        @keyframes eventPulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 107, 107, 0.7); }
+            100% { transform: scale(1.02); box-shadow: 0 0 25px rgba(255, 107, 107, 0.9); }
+        }
+
+        /* Result Screen */
+        .result-screen {
+            text-align: center;
+            padding: 40px 16px;
+        }
+
+        .result-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 16px;
+        }
+
+        .result-text {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Ending Screen */
+        .ending-screen {
+            text-align: center;
+            padding: 40px 16px;
+        }
+
+        .ending-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .ending-text {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Custom Alert/Confirm Modal */
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex; /* Always flex, but hidden by visibility/opacity */
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .custom-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            transform: translateY(-20px);
+            opacity: 0; /* Start with 0 opacity for content transition */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .custom-modal.show .custom-modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .custom-modal-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #34495e;
+            font-weight: bold;
+        }
+
+        .custom-modal-message {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .custom-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .custom-modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .custom-modal-buttons .confirm-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .custom-modal-buttons .confirm-btn:hover {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            transform: translateY(-1px);
+        }
+
+        .custom-modal-buttons .cancel-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .custom-modal-buttons .cancel-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            transform: translateY(-1px);
+        }
+
+        /* Ending Carousel Specific Styles */
+        .ending-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 110; /* Higher than story-overlay */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+        }
+
+        .carousel-content {
+            background: rgba(255, 255, 255, 0.7); /* Translucent background for text */
+            padding: 24px;
+            border-radius: 20px;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 380px; /* Limit width for mobile optimization */
+            text-align: center;
+            position: relative; /* For arrows */
+        }
+
+        .carousel-text {
+            color: #212529;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .carousel-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 120;
+        }
+
+        .carousel-nav-btn.left {
+            left: 10px;
+        }
+
+        .carousel-nav-btn.right {
+            right: 10px;
+        }
+
+        .carousel-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white; /* Changed to white for better visibility on images */
+            font-size: 0.9em;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Add text shadow for readability */
+        }
+
+        /* Scrollbar hiding for all scrollable elements */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        body, .app-container, .page-content, .kakao-messages, .story-content-wrapper, .carousel-content, .action-buttons, .main-content {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop>
+        <source src="https://github.com/heyrichoi/JK/raw/refs/heads/main/%ED%86%B5%ED%86%B5%20%ED%8A%80%EB%8A%94%20%EA%B7%80%EC%97%AC%EC%9A%B4%20%EB%B8%8C%EA%B8%88%20_%20%EC%A0%80%EC%9E%91%EA%B6%8C%20%EB%AC%B4%EB%A3%8C%20%EB%B8%8C%EA%B8%88,%20%EB%B8%8C%EC%9D%B4%EB%A1%9C%EA%B7%B8%20%EB%B8%8C%EA%B8%88,%20%EA%B0%80%EB%B2%BC%EC%9A%B4%20%EB%B8%8C%EA%B8%88,%20royalty%20free%20bgm,%20ncs.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="app-container">
+        <!-- 게임 메인 페이지 -->
+        <div class="page active" id="gamePage">
+            <!-- 상태바 -->
+            <div class="status-header">
+                <div class="app-title">안재경의 자수성가 스토리</div>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label"> 자산</div>
+                        <div class="status-value" id="money">0원</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">💳 빚</div>
+                        <div class="status-value" id="debt">0원</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">📈 경력</div>
+                        <div class="status-value" id="career">무직</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">🏠 거주지</div>
+                        <div class="status-value" id="house">부모님댁</div>
+                    </div>
+                    <!-- 진행도 정보는 여기에 포함합니다. -->
+                    <div class="status-item">
+                        <div class="status-label">🎯 진행도</div>
+                        <div class="status-value" id="episode">1/17</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 거주지 아이콘 -->
+            <div class="house-name-overlay" id="houseNameOverlay">부모님댁</div>
+
+            <!-- 메인 컨텐츠 영역 -->
+            <div class="main-content" id="mainContent">
+                <!-- 집 이미지 배경이 이 div에 직접 적용됩니다. -->
+                
+
+                <!-- 스토리 오버레이 (스토리 텍스트와 선택지를 포함) -->
+                <div class="story-overlay" id="storyOverlay">
+                    <div class="story-content-wrapper">
+                        <div class="story-content" id="storyContent">
+                            <!-- 스토리 내용이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+                    <div class="choices-container">
+                        <div class="choices-grid" id="choicesGrid">
+                            <!-- 선택지들이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 액션 버튼들 -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="game.showPage('bankPage')">🏦 은행</button>
+                <button class="action-btn" onclick="game.showPage('housePage')">🏠 부동산</button>
+                <button class="action-btn" onclick="game.showPage('assetPage')">📊 자산현황</button>
+            </div>
+        </div>
+
+        <!-- 은행 페이지 -->
+        <div class="page" id="bankPage">
+            <div class="page-header">
+                <button class="back-btn" onclick="game.showPage('gamePage')">←</button>
+                <div class="page-title">🏦 국민은행</div>
+            </div>
+            <div class="page-content">
+                <div id="bankOptions"></div>
+            </div>
+        </div>
+
+        <!-- 부동산 페이지 -->
+        <div class="page" id="housePage">
+            <div class="page-header">
+                <button class="back-btn" onclick="game.showPage('gamePage')">←</button>
+                <div class="page-title">🏠 부동산 시장</div>
+            </div>
+            <div class="page-content">
+                <div id="houseGrid"></div>
+            </div>
+        </div>
+
+        <!-- 자산 현황 페이지 -->
+        <div class="page" id="assetPage">
+            <div class="page-header">
+                <button class="back-btn" onclick="game.showPage('gamePage')">←</button>
+                <div class="page-title">📊 자산 현황</div>
+            </div>
+            <div class="page-content">
+                <div id="assetContent">
+                    <!-- 자산 내용이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 카카오톡 모달 -->
+    <div class="kakao-modal" id="kakaoModal">
+        <div class="kakao-phone">
+            <div class="kakao-screen">
+                <div class="kakao-status-bar">
+                    <span>9:41</span>
+                    <span>100% 🔋</span>
+                </div>
+                <div class="kakao-header">
+                    <span>💬 카카오톡</span>
+                    <button class="kakao-close-btn" onclick="game.closeKakao()">×</button>
+                </div>
+                <div class="kakao-messages" id="kakaoMessages"></div>
+                <div id="kakaoChoices" style="padding: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert/Confirm Modal -->
+    <div class="custom-modal" id="customModal">
+        <div class="custom-modal-content" id="customModalContent"> <!-- Added id here -->
+            <h3 class="custom-modal-title" id="customModalTitle"></h3>
+            <p class="custom-modal-message" id="customModalMessage"></p>
+            <div class="custom-modal-buttons" id="customModalButtons">
+                <!-- Buttons will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Ending Carousel -->
+    <div class="ending-carousel" id="endingCarousel" style="display: none;">
+        <div class="carousel-content" id="carouselContent">
+            <!-- Ending and Epilogue content will be loaded here -->
+        </div>
+        <button class="carousel-nav-btn left" onclick="game.navigateEndingCarousel(-1)">←</button>
+        <button class="carousel-nav-btn right" onclick="game.navigateEndingCarousel(1)">→</button>
+        <div class="carousel-indicator" id="carouselIndicator"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make the game object globally accessible AFTER DOM is loaded
+            window.game = new class JaeGyeongGame {
+                constructor() {
+                    this.state = {
+                        money: 500000,
+                        debt: 0,
+                        careerLevel: 0,
+                        currentEpisode: 0,
+                        house: "부모님댁",
+                        houseBuffs: [],
+                        credit: 2, // 0: 매우나쁨, 1: 나쁨, 2: 보통, 3: 좋음, 4: 최상
+                        monthlyExpense: 30000,
+                        monthlyIncome: 0,
+                        age: 24,
+                        failedInvestments: 0,
+                        successfulInvestments: 0,
+                        companyShares: 0,
+                        realEstate: [],
+                        currentConversation: null
+                    };
+                    
+                    this.forcedHouseMove = false;
+                    this.currentMessengerEpisode = null;
+                    
+                    this.careerLevels = ['무직', '인턴', '신입사원', '사원', '주임', '대리', '과장', '차장', '부장', '임원', 'CEO'];
+                    this.creditLevels = ['매우나쁨', '나쁨', '보통', '좋음', '최상'];
+                    this.targetMoney = 50000000000; // 500억원 목표
+                    
+                    this.houseData = [
+                        { name: "부모님댁", price: 0, monthly: 0, description: "부모님과 함께 거주", buffs: ["월 지출 최소화"], debuffs: ["사회적 제약"], unlockLevel: 0, emoji: "🏠", eventModifier: 0.1 }, /* 긍정 이벤트 확률 +10% */
+                        { name: "고시원", price: 500000, monthly: 400000, description: "최소한의 개인 공간", buffs: ["독립 경험 +1"], debuffs: ["삶의 질 하락"], unlockLevel: 0, emoji: "🏢", eventModifier: -0.15 }, /* 부정 이벤트 확률 +15% */
+                        { name: "원룸 (월세)", price: 5000000, monthly: 600000, description: "기본적인 1인 거주 공간", buffs: ["생활 안정성 +1"], debuffs: ["월세 부담"], unlockLevel: 0, emoji: "🏠", eventModifier: 0 },
+                        { name: "투룸 전세", price: 80000000, monthly: 100000, description: "넓은 공간, 전세금 필요", buffs: ["삶의 질 향상", "신용도 +1"], debuffs: ["큰 목돈 필요"], unlockLevel: 2, emoji: "🏘️", eventModifier: 0.05 },
+                        { name: "브랜드 아파트", price: 300000000, monthly: 200000, description: "좋은 환경의 아파트", buffs: ["사회적 신분 상승", "월 수입 +50만원"], debuffs: ["높은 관리비"], unlockLevel: 4, emoji: "🏢", eventModifier: 0.1 },
+                        { name: "강남 오피스텔", price: 500000000, monthly: 1000000, description: "강남 진입, 투자 가치", buffs: ["부동산 수익 가능", "네트워킹 기회"], debuffs: ["높은 대출 이자"], unlockLevel: 5, emoji: "🏙️", eventModifier: 0.15 },
+                        { name: "강남 소형 아파트", price: 1000000000, monthly: 1500000, description: "강남 아파트 소유", buffs: ["자산 가치 상승", "월 수입 +100만원"], debuffs: ["큰 대출 부담"], unlockLevel: 6, emoji: "🏙️", eventModifier: 0.2 },
+                        { name: "강남 대형 아파트", price: 3000000000, monthly: 2000000, description: "넓고 좋은 강남 아파트", buffs: ["높은 사회적 지위", "월 수입 +200만원"], debuffs: ["엄청난 대출"], unlockLevel: 7, emoji: "🏛️", eventModifier: 0.25 },
+                        { name: "강남 300평 豪宅", price: 50000000000, monthly: 5000000, description: "최종 목표! 300평 대저택", buffs: ["목표 달성!", "월 수입 +500만원"], debuffs: ["엄청난 관리비"], unlockLevel: 8, emoji: "🏰", eventModifier: 0.3 }
+                    ];
+                    
+                    this.episodes = [
+                        {
+                            title: "절망적인 현실",
+                            subtitle: "백수 탈출을 위한 첫걸음",
+                            text: `24세 안재경. 대학교 졸업 후 6개월째 백수다. 
+                            통장에는 고작 50만원... 부모님 잔소리는 매일 듣는다.
+                            
+                            "언제까지 이럴 거냐? 친구들은 다 취업했는데..."`,
+                            choices: [
+                                {
+                                    text: "🏢 아무 회사나 일단 들어간다 (단기 계약직)",
+                                    effect: () => {
+                                        this.state.money += 1200000; // 초기 수입 감소
+                                        this.state.monthlyIncome = 1200000; // 월급도 낮게
+                                        this.state.careerLevel = 1; // 인턴
+                                        return "작은 회사에 단기 계약직으로 입사했다. 월 120만원.";
+                                    }
+                                },
+                                {
+                                    text: "📚 공무원 시험 준비한다 (1년 투자)",
+                                    effect: () => {
+                                        if (Math.random() < 0.25) {
+                                            this.state.money += 2800000;
+                                            this.state.monthlyIncome = 2800000;
+                                            this.state.careerLevel = 3;
+                                            this.state.credit = 3;
+                                            return "공무원 합격! 월 280만원의 안정적인 직장.";
+                                        } else {
+                                            this.state.money -= 3000000;
+                                            this.state.age++;
+                                            return "공무원 시험 실패... 1년을 허비했다. 자금이 300만원 줄었다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "💻 프리랜서로 도전한다",
+                                    effect: () => {
+                                        if (Math.random() < 0.4) {
+                                            this.state.money += 2200000;
+                                            this.state.monthlyIncome = 2200000;
+                                            this.state.careerLevel = 2;
+                                            return "프리랜서 첫 프로젝트 성공! 220만원 수익.";
+                                        } else {
+                                            this.state.money -= 800000;
+                                            return "프로젝트 실패... 준비 비용만 80만원 날렸다.";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "친구의 조언",
+                            subtitle: "PRABBIT 입사 제안",
+                            isMessenger: true,
+                            messages: [
+                                { sender: "친구 김민수", text: "야 재경아, 요즘 어떻게 지내? 취업은 했어?" },
+                                { sender: "나", text: "아직... 단기 계약직으로 일하고 있어. 정식 취업은 힘드네ㅠㅠ" },
+                                { sender: "친구 김민수", text: "우리 회사 PRABBIT에서 사람 뽑는다던데? 스타트업이라 힘들긴 한데 성장 가능성 높아." },
+                                { sender: "친구 김민수", text: "스톡옵션도 줘서 나중에 대박날 수도 있어. 한번 지원해볼래?" }
+                            ],
+                            choices: [
+                                {
+                                    text: "🚀 PRABBIT 지원해볼게!",
+                                    effect: () => {
+                                        this.state.money += 2400000;
+                                        this.state.monthlyIncome = 2400000;
+                                        this.state.careerLevel = Math.max(this.state.careerLevel, 2);
+                                        this.state.companyShares = 100;
+                                        this.state.currentEpisode = 2; // PRABBIT 첫 월급
+                                        return "PRABBIT 합격! 월 240만원 + 스톡옵션 100주를 받았다.";
+                                    }
+                                },
+                                {
+                                    text: "🏢 더 안전한 회사를 찾아보겠어",
+                                    effect: () => {
+                                        this.state.money += 3000000;
+                                        this.state.monthlyIncome = 3000000;
+                                        this.state.careerLevel = Math.max(this.state.careerLevel, 3);
+                                        this.state.currentEpisode = 3; // 일반 첫 월급
+                                        return "중견기업 합격! 월 300만원의 안정적 직장.";
+                                    }
+                                },
+                                {
+                                    text: "⏰ 좀 더 알아보고 결정할게",
+                                    effect: () => {
+                                        if (Math.random() < 0.2) { // 20% chance of positive outcome
+                                            this.state.money += 200000;
+                                            this.state.currentEpisode = 4; // 탐색의 시간
+                                            return "신중하게 알아본 덕분에 좋은 재테크 정보를 얻었다. 20만원 수익!";
+                                        } else {
+                                            this.state.money -= 500000;
+                                            this.state.currentEpisode = 4; // 탐색의 시간
+                                            return "기다리는 동안 생활비만 50만원 나갔다...";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        // Episode 2: PRABBIT 첫 월급의 현실 (PRABBIT 선택 시)
+                        {
+                            title: "첫 월급의 현실",
+                            subtitle: "PRABBIT에서의 첫 월급",
+                            text: `드디어 PRABBIT에서 첫 월급을 받았다! 하지만...
+                            세금, 보험, 생활비를 빼고 나니 생각보다 적다.
+                            어떻게 돈을 관리해야 할까?`,
+                            choices: [
+                                {
+                                    text: "💳 신용카드로 편하게 생활",
+                                    effect: () => {
+                                        if (Math.random() < 0.1) {
+                                            this.state.money += 800000;
+                                            this.state.debt += 3000000;
+                                            this.state.credit = Math.min(this.state.credit + 1, 4);
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "편했지만... 카드빚 300만원이 생겼다. 그래도 신용도는 올랐다?";
+                                        } else {
+                                            this.state.money += 800000;
+                                            this.state.debt += 3000000;
+                                            this.state.credit = Math.max(this.state.credit - 1, 0);
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "편했지만... 카드빚 300만원이 생겼다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "📊 철저한 가계부 관리",
+                                    effect: () => {
+                                        this.state.money += 1200000;
+                                        this.state.monthlyExpense -= 20000;
+                                        this.state.credit = Math.min(this.state.credit + 1, 4);
+                                        this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                        return "120만원 저축 성공! 신용도도 상승";
+                                    }
+                                },
+                                {
+                                    text: "🎰 소액 주식 투자로 용돈벌이",
+                                    effect: () => {
+                                        if (Math.random() < 0.3) {
+                                            this.state.money += 1500000;
+                                            this.state.successfulInvestments++;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "주식 투자 성공! 150만원 수익";
+                                        } else {
+                                            this.state.money -= 1000000;
+                                            this.state.failedInvestments++;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "주식으로 100만원 손실...";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        // Episode 3: 안정적인 시작 (안전한 회사 선택 시)
+                        {
+                            title: "안정적인 시작",
+                            subtitle: "중견기업에서의 첫 월급",
+                            text: `안전한 중견기업에 입사하여 첫 월급을 받았습니다.
+                            안정적이지만 큰 변화는 없는 일상입니다.
+                            돈 관리를 어떻게 할까요?`,
+                            choices: [
+                                {
+                                    text: "💳 신용카드로 편하게 생활",
+                                    effect: () => {
+                                        if (Math.random() < 0.1) {
+                                            this.state.money += 800000;
+                                            this.state.debt += 3000000;
+                                            this.state.credit = Math.min(this.state.credit + 1, 4);
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "편했지만... 카드빚 300만원이 생겼다. 그래도 신용도는 올랐다?";
+                                        } else {
+                                            this.state.money += 800000;
+                                            this.state.debt += 3000000;
+                                            this.state.credit = Math.max(this.state.credit - 1, 0);
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "편했지만... 카드빚 300만원이 생겼다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "📊 철저한 가계부 관리",
+                                    effect: () => {
+                                        this.state.money += 1200000;
+                                        this.state.monthlyExpense -= 20000;
+                                        this.state.credit = Math.min(this.state.credit + 1, 4);
+                                        this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                        return "120만원 저축 성공! 신용도도 상승";
+                                    }
+                                },
+                                {
+                                    text: "🎰 소액 주식 투자로 용돈벌이",
+                                    effect: () => {
+                                        if (Math.random() < 0.3) {
+                                            this.state.money += 1500000;
+                                            this.state.successfulInvestments++;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "주식 투자 성공! 150만원 수익";
+                                        } else {
+                                            this.state.money -= 1000000;
+                                            this.state.failedInvestments++;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "주식으로 100만원 손실...";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        // Episode 4: 탐색의 시간 (알아보고 결정 선택 시)
+                        {
+                            title: "탐색의 시간",
+                            subtitle: "새로운 기회를 찾아서",
+                            text: `이직이나 새로운 기회를 탐색하며 시간을 보냈습니다.
+                            자산에 약간의 변화가 있었지만, 아직 큰 성과는 없습니다.
+                            이제 무엇을 할까요?`,
+                            choices: [
+                                {
+                                    text: "💼 이직 준비에 집중",
+                                    effect: () => {
+                                        if (Math.random() < 0.4) {
+                                            this.state.monthlyIncome += 500000;
+                                            this.state.careerLevel = Math.max(this.state.careerLevel, 3);
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "이직 성공! 월급이 50만원 올랐다.";
+                                        } else {
+                                            this.state.money -= 500000;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "이직 준비 비용만 날렸다...";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "📈 소액 투자로 경험 쌓기",
+                                    effect: () => {
+                                        if (Math.random() < 0.3) {
+                                            this.state.money += 1000000;
+                                            this.state.successfulInvestments++;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "소액 투자 성공! 100만원 수익.";
+                                        } else {
+                                            this.state.money -= 300000;
+                                            this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                            return "소액 투자 실패... 30만원 손실.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🧘 현재 상황 유지하며 휴식",
+                                    effect: () => {
+                                        this.state.money -= 100000;
+                                        this.state.currentEpisode = 5; // 다음 에피소드 인덱스 조정
+                                        return "큰 변화 없이 휴식하며 생활비를 지출했다.";
+                                    }
+                                }
+                            ]
+                        },
+                        // Episode 5 (Original index 4): 투자의 유혹
+                        {
+                            title: "투자의 유혹",
+                            subtitle: "자산 증식을 위한 고민",
+                            text: `돈이 좀 모이니까 주변에서 투자 얘기를 많이 한다.
+                            "부동산은 무조건 오른다", "비트코인 대박", "지인 소개 투자상품"...
+                            
+                            어떻게 할까?`,
+                            choices: [
+                                {
+                                    text: "🏠 소형 아파트 투자 (대출 끼고 구매)",
+                                    effect: () => {
+                                        if (Math.random() < 0.7) {
+                                            this.state.money += 50000000;
+                                            this.state.debt += 100000000;
+                                            this.state.realEstate.push("소형아파트");
+                                            this.state.monthlyExpense += 800000;
+                                            return "아파트값 상승! 5천만원 수익, 하지만 1억 대출";
+                                        } else {
+                                            this.state.money -= 20000000;
+                                            this.state.debt += 100000000;
+                                            this.state.monthlyExpense += 800000;
+                                            return "아파트값 하락... 2천만원 손해에 1억 대출까지";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "📈 안전한 예·적금과 국채",
+                                    effect: () => {
+                                        this.state.money += 3000000;
+                                        this.state.monthlyIncome += 150000;
+                                        this.state.credit = Math.min(this.state.credit + 1, 4);
+                                        return "안전한 투자로 300만원 이익, 매월 15만원 이자";
+                                    }
+                                },
+                                {
+                                    text: "💎 지인 추천 '확실한' 투자상품",
+                                    effect: () => {
+                                        if (Math.random() < 0.15) {
+                                            this.state.money += 30000000;
+                                            return "정말 대박! 3천만원 수익을 얻었다.";
+                                        } else {
+                                            this.state.money -= 15000000;
+                                            this.state.credit--;
+                                            return "사기였다... 1500만원을 잃었다.";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        // Episode 6 (Original index 5): 부모님과의 갈등 (초반으로 이동)
+                        {
+                            title: "부모님과의 갈등",
+                            subtitle: "독립의 기로",
+                            isMessenger: true,
+                            messages: [
+                                { sender: "어머니", text: "재경아, 언제 결혼할 거니?" },
+                                { sender: "어머니", text: "옆집 아들은 벌써 결혼해서 아이까지..." },
+                                { sender: "나", text: "엄마... 지금은 일에 집중하고 싶어요" },
+                                { sender: "어머니", text: "일만 하면 뭐해. 나이도 있는데" },
+                                { sender: "어머니", text: "그리고 집은 언제 사려고? 전세금도 마련 안 됐잖아" }
+                            ],
+                            choices: [
+                                {
+                                    text: "💍 결혼 잔소리에 맞선다", // Changed text
+                                    effect: () => {
+                                        if (Math.random() < 0.4) { // Increased chance of positive outcome slightly
+                                            this.state.credit = Math.min(this.state.credit + 1, 4); // Boost credit for standing firm
+                                            return "잔소리에 맞섰다! 부모님도 당신의 의지를 존중해주셨다. 신용도 상승!";
+                                        } else {
+                                            this.state.money -= 200000; // Small penalty for conflict
+                                            return "잔소리에 맞섰지만, 부모님과의 관계가 잠시 서먹해졌다. 20만원 지출.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🏠 잔소리를 피해 독립을 결심한다", // Changed text
+                                    effect: () => {
+                                        this.state.monthlyExpense += 100000; // Cost of independence
+                                        this.forcedHouseMove = true;
+                                        return "부모님 잔소리를 피해 독립을 결심했다! 새로운 보금자리를 찾아야 한다.";
+                                    }
+                                },
+                                {
+                                    text: "🙏 부모님 말씀에 순응하고 노력한다", // Changed text
+                                    effect: () => {
+                                        if (Math.random() < 0.6) { // Higher chance of positive outcome
+                                            this.state.monthlyIncome += 100000; // Small income boost
+                                            this.state.careerLevel = Math.min(this.state.careerLevel + 1, this.careerLevels.length -1); // Small career boost
+                                            return "부모님 말씀에 따라 노력하니 좋은 기회가 찾아왔다! 월 수입 10만원 증가.";
+                                        } else {
+                                            this.state.money -= 100000; // Small penalty for wasted effort
+                                            return "부모님 말씀대로 노력했지만 큰 변화는 없었다. 10만원 지출.";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "직장 내 갈등",
+                            subtitle: "리더십의 시험대",
+                            text: `승진 후, 직장 내에서 당신의 입지가 흔들리는 사건이 발생했다.
+                            새로운 프로젝트의 방향성을 두고 상사, 동료들과 의견 충돌이 심화된다.
+                            당신의 리더십이 시험대에 올랐다.`,
+                            choices: [
+                                {
+                                    text: "🗣️ 적극적으로 설득하고 리더십을 발휘한다",
+                                    effect: () => {
+                                        if (Math.random() < 0.6) {
+                                            this.state.careerLevel++;
+                                            this.state.monthlyIncome += 300000;
+                                            return "갈등을 성공적으로 해결하고 리더십을 인정받아 추가 승진 기회가 생겼다!";
+                                        } else {
+                                            this.state.credit--;
+                                            return "설득에 실패하고 오히려 관계가 악화되었다. 업무 성과에도 부정적 영향...";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "� 타협하고 팀워크를 우선시한다",
+                                    effect: () => {
+                                        this.state.money += 1000000;
+                                        return "갈등은 봉합되었지만, 당신의 주장을 펼치지 못해 아쉬움이 남는다. 소소한 보너스 획득.";
+                                    }
+                                },
+                                {
+                                    text: "転職 쿨하게 이직을 알아본다",
+                                    effect: () => {
+                                        if (Math.random() < 0.3) {
+                                            this.state.monthlyIncome += 1000000;
+                                            this.state.careerLevel += 1;
+                                            return "새로운 회사에서 더 좋은 조건으로 이직에 성공했다!";
+                                        } else {
+                                            this.state.money -= 1000000;
+                                            return "이직이 쉽지 않다. 오히려 이직 준비 비용만 날렸다.";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "새로운 투자처",
+                            subtitle: "미래를 위한 베팅",
+                            text: `기존 투자 외에 새로운 분야에 대한 정보가 들려온다.
+                            AI 스타트업, 친환경 에너지, 혹은 해외 부동산 등...
+                            리스크는 있지만, 성공하면 큰 수익을 기대할 수 있다.`,
+                            choices: [
+                                {
+                                    text: "🤖 AI 스타트업에 과감히 투자",
+                                    effect: () => {
+                                        const investment = this.state.money * 0.1; // 자산의 10% 투자
+                                        this.state.money -= investment;
+                                        if (Math.random() < 0.2) {
+                                            this.state.money += investment * 5; // 5배 수익
+                                            this.state.successfulInvestments += 3;
+                                            return `AI 스타트업 투자 대박! 투자금의 5배 수익을 얻었다! (${(investment * 4).toLocaleString()}원 증가)`;
+                                        } else {
+                                            this.state.money -= investment * 0.8; // 80% 손실
+                                            this.state.failedInvestments += 1;
+                                            return `AI 스타트업 투자 실패... 투자금의 대부분을 잃었다. (${(investment * 0.8).toLocaleString()}원 손실)`;
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🌍 해외 부동산에 분산 투자",
+                                    effect: () => {
+                                        const investment = this.state.money * 0.15; // 자산의 15% 투자
+                                        this.state.money -= investment;
+                                        if (Math.random() < 0.4) {
+                                            this.state.money += investment * 2; // 2배 수익
+                                            this.state.successfulInvestments += 2;
+                                            return `해외 부동산 투자 성공! 안정적으로 2배 수익을 얻었다. (${investment.toLocaleString()}원 증가)`;
+                                        } else {
+                                            this.state.money -= investment * 0.5; // 50% 손실
+                                            this.state.failedInvestments += 1;
+                                            return `해외 부동산 투자 실패... 환율 변동으로 50% 손실. (${(investment * 0.5).toLocaleString()}원 손실)`;
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "💰 안전하게 현금 보유",
+                                    effect: () => {
+                                        this.state.money += 5000000;
+                                        return "새로운 투자 없이 현금을 지켰다. 소소한 은행 이자 수익.";
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "건강의 적신호",
+                            subtitle: "몸이 보내는 경고",
+                            text: `바쁜 일상과 스트레스로 인해 건강에 적신호가 켜졌다.
+                            만성 피로, 소화 불량 등 몸이 예전 같지 않다.
+                            지금 건강을 챙기지 않으면 미래에 큰 문제가 될 수도 있다.`,
+                            choices: [
+                                {
+                                    text: "💪 전문적인 건강 관리 프로그램 등록",
+                                    effect: () => {
+                                        this.state.money -= 5000000;
+                                        this.state.monthlyExpense += 100000;
+                                        this.state.credit = Math.min(this.state.credit + 1, 4); // 자기 관리로 신용도 상승
+                                        return "500만원을 들여 건강 관리를 시작했다. 월 10만원 추가 지출. 몸이 좋아지는 느낌이다.";
+                                    }
+                                },
+                                {
+                                    text: "😴 휴식하며 스트레스 해소",
+                                    effect: () => {
+                                        this.state.money -= 1000000;
+                                        return "100만원을 들여 여행을 다녀오며 휴식했다. 몸은 좀 나아졌지만 돈이 줄었다.";
+                                    }
+                                },
+                                {
+                                    text: "💊 영양제와 민간요법에 의존",
+                                    effect: () => {
+                                        if (Math.random() < 0.1) { // 10% chance of getting worse
+                                            this.state.money -= 3000000;
+                                            this.state.monthlyIncome -= 500000; // 건강 악화로 인한 수입 감소
+                                            return "영양제와 민간요법에 의존했지만, 건강이 더 나빠져 병원비가 들고 월 수입도 줄었다...";
+                                        } else {
+                                            this.state.money -= 500000;
+                                            return "영양제와 민간요법으로 버텨본다. 큰 변화는 없다.";
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "사회적 기여",
+                            subtitle: "나눔의 가치",
+                            text: `자산이 늘어나면서 사회에 환원해야 한다는 생각이 든다.
+                            어떤 방식으로 사회에 기여할 수 있을까?`,
+                            choices: [
+                                {
+                                    text: "🎓 교육 재단 설립 (50억 기부)",
+                                    effect: () => {
+                                        if (this.state.money >= 5000000000) {
+                                            this.state.money -= 5000000000;
+                                            this.state.credit = 4; // 신용도 최상
+                                            return "50억을 기부하여 교육 재단을 설립했다. 사회에 큰 영향을 미쳤다.";
+                                        } else {
+                                            return "자금이 부족하여 교육 재단을 설립할 수 없다. 더 노력해야 한다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🌳 환경 보호 단체 후원 (1억 기부)",
+                                    effect: () => {
+                                        if (this.state.money >= 100000000) {
+                                            this.state.money -= 100000000;
+                                            this.state.credit = Math.min(this.state.credit + 1, 4);
+                                            return "환경 보호 단체에 1억을 후원했다. 환경 보호에 일조했다.";
+                                        } else {
+                                            return "자금이 부족하여 후원할 수 없다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "💰 익명으로 소액 기부",
+                                    effect: () => {
+                                        this.state.money -= 10000000;
+                                        return "익명으로 1천만원을 기부했다. 작은 나눔이지만 뿌듯하다.";
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "글로벌 경제의 파도",
+                            subtitle: "세계 시장의 변동성",
+                            text: `갑작스러운 국제 정세 변화로 글로벌 경제가 요동치기 시작했다.
+                            당신의 자산에도 큰 영향을 미칠 수 있는 상황이다.
+                            이 위기를 어떻게 헤쳐나갈까?`,
+                            choices: [
+                                {
+                                    text: "📉 해외 자산 비중 축소 및 현금 확보",
+                                    effect: () => {
+                                        if (Math.random() < 0.7) {
+                                            this.state.money += 1000000000; // 일부 수익 실현
+                                            return "해외 자산 비중을 줄여 위기를 피하고 10억 수익을 얻었다.";
+                                        } else {
+                                            this.state.money -= 500000000; // 일부 손실
+                                            return "해외 자산 축소 시도가 늦어 5억 손실을 입었다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "📈 위기를 기회 삼아 저평가된 해외 자산 매수",
+                                    effect: () => {
+                                        if (Math.random() < 0.3) {
+                                            this.state.money += 3000000000; // 대박 수익
+                                            return "과감한 투자로 저평가된 자산에서 30억 대박 수익을 얻었다!";
+                                        } else {
+                                            this.state.money -= 1500000000; // 큰 손실
+                                            return "무리한 투자로 15억 손실을 입었다. 역시 글로벌 경제는 어렵다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🧘 국내 자산 위주로 안정적인 운영",
+                                    effect: () => {
+                                        this.state.money += 200000000; // 소소한 이득
+                                        return "안정적인 국내 자산 운영으로 2억원의 수익을 얻었다. 큰 위험은 피했다.";
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            title: "마지막 선택",
+                            subtitle: "인생의 최종 목표",
+                            text: `목표에 근접했다! 이제 정말 마지막 선택만 남았다.
+                            어떻게 인생을 마무리할 것인가?`,
+                            choices: [
+                                {
+                                    text: "🎓 재단 설립으로 사회 환원",
+                                    effect: () => {
+                                        if (this.state.money >= 5000000000) {
+                                            this.state.money -= 5000000000;
+                                            this.state.credit = 4; // 신용도 최상
+                                            return "50억으로 교육재단 설립. 진정한 성공자의 길";
+                                        } else {
+                                            return "자금이 부족하여 재단을 설립할 수 없다. 더 노력해야 한다.";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🚀 더 큰 사업에 재투자",
+                                    effect: () => {
+                                        if (Math.random() < 0.5) {
+                                            this.state.money += 30000000000;
+                                            return "재투자로 300억 추가! 진정한 재벌";
+                                        } else {
+                                            this.state.money -= 20000000000;
+                                            return "재투자 실패로 200억 손실. 여전히 부자";
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "🏖️ 은퇴하며 여생을 즐긴다",
+                                    effect: () => {
+                                        this.state.monthlyExpense += 2000000;
+                                        return "일찍 은퇴. 남은 인생을 자유롭게";
+                                    }
+                                }
+                            ]
+                        }
+                    ];
+                    
+                    // Define background images for each house type and endings/epilogues
+                    this.houseBackgrounds = {
+                        "부모님댁": 'https://imgur.com/yNsxBgc.png',
+                        "고시원": 'https://imgur.com/iyZQil1.png',
+                        "원룸 (월세)": 'https://imgur.com/h3hv1GP.png',
+                        "투룸 전세": 'https://imgur.com/KRrCDYY.png',
+                        "브랜드 아파트": 'https://imgur.com/IhnsTxj.png',
+                        "강남 오피스텔": 'https://imgur.com/y0oibQm.png',
+                        "강남 소형 아파트": 'https://imgur.com/IhnsTxj.png', // Same as brand apartment
+                        "강남 대형 아파트": 'https://imgur.com/pcSi0bx.png',
+                        "강남 300평 豪宅": 'https://imgur.com/XAFbYoe.png',
+                        "임시 거처": 'https://placehold.co/1920x1080/8b0000/ffffff?text=Temporary+Shelter', // Fallback for forced move
+                        "파산": 'https://imgur.com/A2sM1Fv.png',
+                        "노말 엔딩": 'https://imgur.com/eWpemZO.png',
+                        "굿 엔딩": 'https://imgur.com/cjJYKrY.png',
+                        "성공": 'https://imgur.com/vqQB0a5.png', // Perfect Ending
+                        "결혼 에필로그": 'https://imgur.com/yoGLnHs.png',
+                        "주식 대성공 에필로그": 'https://imgur.com/x5nQwoX.png'
+                    };
+
+                    this.endingPages = []; // To store generated ending/epilogue content
+                    this.currentEndingPageIndex = 0;
+                    
+                    this.init();
+                }
+                
+                init() {
+                    console.log("게임 초기화 시작. 초기 상태:", JSON.parse(JSON.stringify(this.state)));
+                    this.showPage('gamePage'); // Start on the main game page
+                    this.updateHouseImage(); // Set initial house image
+                    this.showEpisode(); // Load the first episode
+                    this.playBackgroundMusic(); // Start background music
+                    this.updateStatus(); // Initial status update
+                }
+                
+                // Function to play background music
+                playBackgroundMusic() {
+                    const audio = document.getElementById('backgroundMusic');
+                    if (audio) {
+                        audio.volume = 0.5; // Adjust volume as needed
+                        audio.play().catch(e => console.log("Autoplay prevented:", e)); // Handle autoplay policy
+                    }
+                }
+
+                // Custom Alert/Confirm functions
+                showCustomAlert(message, title = '알림', callback = () => {}) {
+                    const modal = document.getElementById('customModal');
+                    const modalContent = document.getElementById('customModalContent');
+                    if (!modal || !modalContent) {
+                        console.error("Custom modal elements not found!");
+                        return;
+                    }
+                    document.getElementById('customModalTitle').textContent = title;
+                    document.getElementById('customModalMessage').textContent = message;
+                    const buttonsDiv = document.getElementById('customModalButtons');
+                    buttonsDiv.innerHTML = ''; // Clear previous buttons
+
+                    const okButton = document.createElement('button');
+                    okButton.textContent = '확인';
+                    okButton.className = 'confirm-btn';
+                    okButton.onclick = () => {
+                        console.log("Custom Alert: Confirm button clicked. Closing modal and executing callback.");
+                        modal.classList.remove('show');
+                        // After transition, set visibility to hidden
+                        setTimeout(() => {
+                            modal.style.visibility = 'hidden';
+                            callback();
+                        }, 300); // Match CSS transition duration
+                    };
+                    buttonsDiv.appendChild(okButton);
+
+                    modal.style.visibility = 'visible'; // Make it visible
+                    modal.classList.add('show'); // Trigger opacity and transform
+                    console.log("Custom Alert: Modal is now visible (show class added).");
+                }
+
+                showCustomConfirm(message, title = '확인', onConfirm = () => {}, onCancel = () => {}) {
+                    const modal = document.getElementById('customModal');
+                    const modalContent = document.getElementById('customModalContent');
+                    if (!modal || !modalContent) {
+                        console.error("Custom modal elements not found!");
+                        return;
+                    }
+                    document.getElementById('customModalTitle').textContent = title;
+                    document.getElementById('customModalMessage').textContent = message;
+                    const buttonsDiv = document.getElementById('customModalButtons');
+                    buttonsDiv.innerHTML = ''; // Clear previous buttons
+
+                    const confirmButton = document.createElement('button');
+                    confirmButton.textContent = '확인';
+                    confirmButton.className = 'confirm-btn';
+                    confirmButton.onclick = () => {
+                        console.log("Custom Confirm: Confirm button clicked. Executing onConfirm callback.");
+                        modal.classList.remove('show');
+                        setTimeout(() => {
+                            modal.style.visibility = 'hidden';
+                            onConfirm();
+                        }, 300); // Match CSS transition duration
+                    };
+                    buttonsDiv.appendChild(confirmButton);
+
+                    const cancelButton = document.createElement('button');
+                    cancelButton.textContent = '취소';
+                    cancelButton.className = 'cancel-btn';
+                    cancelButton.onclick = () => {
+                        console.log("Custom Confirm: Cancel button clicked. Executing onCancel callback.");
+                        modal.classList.remove('show');
+                        setTimeout(() => {
+                            modal.style.visibility = 'hidden';
+                            onCancel();
+                        }, 300); // Match CSS transition duration
+                    };
+                    buttonsDiv.appendChild(cancelButton);
+
+                    modal.style.visibility = 'visible'; // Make it visible
+                    modal.classList.add('show'); // Trigger opacity and transform
+                    console.log("Custom Confirm: Modal is now visible (show class added).");
+                }
+
+                // Function to switch between pages
+                showPage(pageId) {
+                    console.log(`페이지 전환: ${pageId}`);
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.classList.remove('active');
+                    });
+                    const targetPage = document.getElementById(pageId);
+                    if (targetPage) {
+                        targetPage.classList.add('active');
+                    } else {
+                        console.error(`ID "${pageId}"를 가진 페이지를 찾을 수 없습니다.`);
+                    }
+                    
+                    // Load content for the specific page
+                    if (pageId === 'bankPage') {
+                        this.loadBankPage();
+                    } else if (pageId === 'housePage') {
+                        this.loadHousePage();
+                    } else if (pageId === 'assetPage') {
+                        this.loadAssetPage();
+                    }
+                    this.updateStatus(); // Update status bar after page change
+                }
+                
+                loadBankPage() {
+                    console.log("은행 페이지 로드. 현재 상태:", JSON.parse(JSON.stringify(this.state)));
+                    const bankOptions = document.getElementById('bankOptions');
+                    
+                    const loanOptions = [
+                        {
+                            amount: 10000000,
+                            interest: 0.05,
+                            term: 36,
+                            description: "소액 대출",
+                            requirement: "신용도 보통 이상",
+                            creditMin: 2,
+                            careerMin: 0,
+                            monthlyIncomeMin: 0
+                        },
+                        {
+                            amount: 50000000,
+                            interest: 0.04,
+                            term: 60,
+                            description: "중액 대출", 
+                            requirement: "신용도 좋음 이상, 직장 필요",
+                            creditMin: 3,
+                            careerMin: 2,
+                            monthlyIncomeMin: 0
+                        },
+                        {
+                            amount: 200000000,
+                            interest: 0.035,
+                            term: 120,
+                            description: "고액 대출",
+                            requirement: "신용도 좋음 이상, 월 수입 500만원 이상",
+                            creditMin: 3,
+                            careerMin: 0, // Career level not explicitly required, but income is.
+                            monthlyIncomeMin: 5000000
+                        }
+                    ];
+                    
+                    bankOptions.innerHTML = loanOptions.map((loan, index) => {
+                        const canApply = this.canGetLoan(loan);
+                        const monthlyPayment = this.calculateMonthlyPayment(loan.amount, loan.interest, loan.term);
+                        console.log(`대출 옵션 [${loan.description}]: canApply = ${canApply}, 현재 신용도: ${this.creditLevels[this.state.credit]}, 필요 신용도: ${this.creditLevels[loan.creditMin || 0]}, 현재 경력: ${this.careerLevels[this.state.careerLevel]}, 필요 경력: ${this.careerLevels[loan.careerMin || 0]}, 현재 월수입: ${this.state.monthlyIncome.toLocaleString()}, 필요 월수입: ${loan.monthlyIncomeMin.toLocaleString()}`);
+                        
+                        let statusText = '';
+                        if (canApply) {
+                            statusText = '✓ 대출 가능';
+                        } else {
+                            statusText = '❌ 조건 불충족';
+                            if (loan.creditMin !== undefined && this.state.credit < loan.creditMin) {
+                                statusText += ` (신용도: ${this.creditLevels[loan.creditMin]} 필요)`;
+                            }
+                            if (loan.careerMin !== undefined && this.state.careerLevel < loan.careerMin) {
+                                statusText += ` (경력: ${this.careerLevels[loan.careerMin]} 필요)`;
+                            }
+                            if (loan.monthlyIncomeMin !== undefined && this.state.monthlyIncome < loan.monthlyIncomeMin) {
+                                statusText += ` (월수입: ${loan.monthlyIncomeMin.toLocaleString()}원 필요)`;
+                            }
+                        }
+
+                        return `
+                            <div class="loan-option ${canApply ? '' : 'locked'}" 
+                                 data-loan-index="${index}"
+                                 style="${!canApply ? 'pointer-events: none;' : ''}">
+                                <div class="loan-amount">${loan.description} - ${loan.amount.toLocaleString()}원</div>
+                                <div class="loan-terms">
+                                    연 ${(loan.interest * 100).toFixed(1)}% / ${loan.term}개월<br>
+                                    월상환액: ${monthlyPayment.toLocaleString()}원<br>
+                                    조건: ${loan.requirement}<br>
+                                    <span style="color: ${canApply ? '#28a745' : '#dc3545'};">${statusText}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Add event listener delegation for loan options
+                    document.getElementById('bankOptions').querySelectorAll('.loan-option').forEach(item => {
+                        item.onclick = () => {
+                            const index = parseInt(item.dataset.loanIndex);
+                            game.handleLoanOptionClick(index);
+                        };
+                    });
+                }
+                
+                canGetLoan(loan) {
+                    let meetsConditions = true;
+                    if (loan.creditMin !== undefined && this.state.credit < loan.creditMin) {
+                        meetsConditions = false;
+                    }
+                    if (loan.careerMin !== undefined && this.state.careerLevel < loan.careerMin) {
+                        meetsConditions = false;
+                    }
+                    if (loan.monthlyIncomeMin !== undefined && this.state.monthlyIncome < loan.monthlyIncomeMin) {
+                        meetsConditions = false;
+                    }
+                    return meetsConditions;
+                }
+                
+                calculateMonthlyPayment(principal, annualRate, months) {
+                    const monthlyRate = annualRate / 12;
+                    if (monthlyRate === 0) {
+                        return Math.floor(principal / months);
+                    }
+                    return Math.floor((principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / 
+                                     (Math.pow(1 + monthlyRate, months) - 1));
+                }
+
+                // New function to handle loan option clicks
+                handleLoanOptionClick(loanIndex) {
+                    const loanOptions = [
+                        { amount: 10000000, interest: 0.05, term: 36, creditMin: 2, careerMin: 0, monthlyIncomeMin: 0 },
+                        { amount: 50000000, interest: 0.04, term: 60, creditMin: 3, careerMin: 2, monthlyIncomeMin: 0 },
+                        { amount: 200000000, interest: 0.035, term: 120, creditMin: 3, careerMin: 0, monthlyIncomeMin: 5000000 }
+                    ];
+                    const loan = loanOptions[loanIndex];
+
+                    if (!this.canGetLoan(loan)) {
+                        let statusText = '❌ 조건 불충족';
+                        if (loan.creditMin !== undefined && this.state.credit < loan.creditMin) {
+                            statusText += ` (신용도: ${this.creditLevels[loan.creditMin]} 필요)`;
+                        }
+                        if (loan.careerMin !== undefined && this.state.careerLevel < loan.careerMin) {
+                            statusText += ` (경력: ${this.careerLevels[loan.careerMin]} 필요)`;
+                        }
+                        if (loan.monthlyIncomeMin !== undefined && this.state.monthlyIncome < loan.monthlyIncomeMin) {
+                            statusText += ` (월수입: ${loan.monthlyIncomeMin.toLocaleString()}원 필요)`;
+                        }
+                        this.showCustomAlert(`대출 조건을 충족하지 않습니다.\n${statusText}`, "대출 불가");
+                        console.log("대출 불가: 조건 불충족.");
+                        return;
+                    }
+
+                    this.takeLoan(loanIndex);
+                }
+                
+                takeLoan(loanIndex) {
+                    const loanOptions = [
+                        { amount: 10000000, interest: 0.05, term: 36 },
+                        { amount: 50000000, interest: 0.04, term: 60 },
+                        { amount: 200000000, interest: 0.035, term: 120 }
+                    ];
+                    
+                    const loan = loanOptions[loanIndex];
+                    const monthlyPayment = this.calculateMonthlyPayment(loan.amount, loan.interest, loan.term);
+                    
+                    console.log(`대출 시도: ${loan.amount.toLocaleString()}원. 현재 상태:`, JSON.parse(JSON.stringify(this.state)));
+
+                    this.showCustomConfirm(
+                        `${loan.amount.toLocaleString()}원을 대출받으시겠습니까?\n월 상환액: ${monthlyPayment.toLocaleString()}원\n\n대출 후 즉시 자금이 입금됩니다.`,
+                        "대출 확인",
+                        () => {
+                            this.state.money += loan.amount;
+                            this.state.debt += loan.amount;
+                            this.state.monthlyExpense += monthlyPayment;
+                            this.state.credit = Math.max(this.state.credit - 1, 0); // 대출 시 신용도 하락
+                            
+                            console.log(`대출 완료. 변경된 상태:`, JSON.parse(JSON.stringify(this.state)));
+                            this.updateStatus();
+                            this.showCustomAlert(`✅ 대출 완료!\n💰 ${loan.amount.toLocaleString()}원이 통장에 입금되었습니다.`, "대출 성공", () => {
+                                // Added setTimeout to ensure alert is dismissed before page transition
+                                setTimeout(() => this.showPage('gamePage'), 300); 
+                            });
+                        },
+                        () => {
+                            console.log("대출 취소됨.");
+                        }
+                    );
+                }
+                
+                loadHousePage() {
+                    console.log("부동산 페이지 로드. 현재 상태:", JSON.parse(JSON.stringify(this.state)));
+                    const houseGrid = document.getElementById('houseGrid');
+                    
+                    houseGrid.innerHTML = this.houseData.map((house, index) => {
+                        let canAfford = (house.price <= this.state.money);
+                        let isUnlocked = (this.state.careerLevel >= house.unlockLevel);
+                        let isOwned = (this.state.house === house.name);
+                        
+                        let cardClass = 'house-card';
+                        
+                        if (isOwned) {
+                            cardClass += ' owned';
+                        } else if (!isUnlocked) {
+                            cardClass += ' locked';
+                        } else if (canAfford) {
+                            cardClass += ' affordable';
+                        } else {
+                            cardClass += ' expensive';
+                        }
+                        
+                        const buffsHTML = house.buffs ? house.buffs.map(buff => 
+                            `<div class="buff-item">✓ ${buff}</div>`
+                        ).join('') : '';
+                        
+                        const debuffsHTML = house.debuffs ? house.debuffs.map(debuff => 
+                            `<div class="buff-item" style="color: #dc3545;">✗ ${debuff}</div>`
+                        ).join('') : '';
+                        
+                        const monthlyDisplay = house.monthly ? `월 ${house.monthly.toLocaleString()}원` : '월 0원';
+                        
+                        let statusText = '';
+                        if (isOwned) {
+                            statusText = '✅ 현재 거주중';
+                        } else if (!isUnlocked) {
+                            statusText = '🔒 미해금 (경력 ' + this.careerLevels[house.unlockLevel] + '단계 필요)';
+                        } else if (!canAfford) {
+                            statusText = '💰 자금 부족!';
+                        } else {
+                            statusText = '✓ 구매 가능';
+                        }
+                        
+                        // Use data-attribute and event delegation for house cards
+                        return `<div class="${cardClass}" 
+                                    data-house-index="${index}" 
+                                    style="cursor: pointer;">
+                                <div class="house-price">
+                                    ${house.price === 0 ? '무료' : house.price.toLocaleString() + '원'}
+                                </div>
+                                <div class="house-monthly">${monthlyDisplay}</div>
+                                <div class="house-name">${house.emoji} ${house.name}</div>
+                                <div class="house-description">${house.description}</div>
+                                <div class="house-buffs">
+                                    ${buffsHTML}
+                                    ${debuffsHTML}
+                                </div>
+                                <div class="house-status">${statusText}</div>
+                            </div>`;
+                    }).join('');
+
+                    // Add event listener delegation to the houseGrid
+                    document.getElementById('houseGrid').querySelectorAll('.house-card').forEach(card => {
+                        card.onclick = () => {
+                            const index = parseInt(card.dataset.houseIndex);
+                            game.selectHouse(index);
+                        };
+                    });
+                }
+                
+                selectHouse(houseIndex) {
+                    const house = this.houseData[houseIndex];
+                    console.log(`집 선택 시도: ${house.name}. 현재 상태:`, JSON.parse(JSON.stringify(this.state)));
+
+                    if (this.state.house === house.name) {
+                        this.showCustomAlert("이미 현재 거주 중인 집입니다!", "이사 불가");
+                        console.log("이사 불가: 이미 거주 중인 집입니다.");
+                        return;
+                    }
+
+                    if (this.state.careerLevel < house.unlockLevel) {
+                        this.showCustomAlert(`아직 ${house.name}으로 이사할 수 없습니다.\n\n경력 ${this.careerLevels[house.unlockLevel]} 단계 이상이 필요합니다.`, "이사 불가");
+                        console.log("이사 불가: 경력 부족. (현재 경력: " + this.careerLevels[this.state.careerLevel] + ", 필요 경력: " + this.careerLevels[house.unlockLevel] + ")");
+                        return;
+                    }
+                    
+                    if (house.price > this.state.money) {
+                        console.log("자금 부족. 대출 확인 모달 표시 시도.");
+                        this.showCustomConfirm(
+                            `자금이 부족합니다! (${house.price.toLocaleString()}원 필요)\n은행에서 대출을 받으시겠습니까?`,
+                            "자금 부족",
+                            () => {
+                                console.log("대출 확인 모달: 확인 클릭됨. 은행 페이지로 이동.");
+                                this.showPage('bankPage');
+                            }, 
+                            () => {
+                                console.log("대출 확인 모달: 취소 클릭됨.");
+                            }
+                        );
+                        return;
+                    }
+                    
+                    // If all conditions above are met, proceed to show the main house selection confirm
+                    const monthlyText = house.monthly ? house.monthly.toLocaleString() : "0";
+                    const confirmText = `${house.name}으로 이사하시겠습니까?\n\n구매비용: ${house.price.toLocaleString()}원\n월 지출: ${monthlyText}원\n\n버프: ${house.buffs.join(', ')}\n${house.debuffs ? '단점: ' + house.debuffs.join(', ') : ''}`;
+                    
+                    console.log("이사 확인 모달 표시 시도."); // Log before showing the main confirmation
+
+                    // Define the onConfirm function separately to avoid template literal issues
+                    const onConfirmMove = () => {
+                        console.log("이사 확인 모달: 확인 클릭됨. 이사 진행."); // Log for confirmation
+                        this.removeCurrentHouseBuffs();
+                        this.state.money -= house.price;
+                        this.state.house = house.name;
+                        this.applyHouseBuffs(house);
+                        
+                        console.log(`이사 완료. 변경된 상태:`, JSON.parse(JSON.stringify(this.state)));
+                        this.updateStatus();
+                        this.updateHouseImage(); 
+                        
+                        if (this.forcedHouseMove) {
+                            this.forcedHouseMove = false;
+                            console.log("강제 이사 완료. 다음 에피소드 진행.");
+                            this.showCustomAlert(
+                                `${house.name}으로 이사 완료!\n\n부모님과의 갈등은 해결되었지만, 독립의 책임이 무겁습니다.\n새로운 환경에서 다시 시작해야 합니다.`,
+                                "이사 완료",
+                                () => {
+                                    this.showPage('gamePage'); // Go back to game page after alert dismissal
+                                    this.nextEpisode(); // nextEpisode will handle the game flow
+                                }
+                            );
+                            return;
+                        }
+                        
+                        console.log("일반 이사 완료. 게임 페이지로 복귀.");
+                        this.showCustomAlert(
+                            `${house.name}으로 이사 완료!\n\n새로운 환경에서 생활을 시작합니다.\n월 지출: ${monthlyText}원이 추가됩니다.`,
+                            "이사 완료",
+                            () => {
+                                this.showPage('gamePage');
+                            }
+                        );
+                        
+                        if (house.name === "강남 300평 豪宅") {
+                            setTimeout(() => {
+                                this.showCustomAlert("🎉🎉🎉 축하합니다! 🎉🎉🎉\n\n드디어 꿈의 강남 300평 대저택을 구매했습니다!\n안재경의 자수성가 성공 스토리가 완성되었습니다!", "목표 달성!", () => {
+                                    this.showEnding();
+                                });
+                            }, 500);
+                        }
+                    };
+
+                    this.showCustomConfirm(
+                        confirmText,
+                        "이사 확인",
+                        onConfirmMove, // Pass the named function
+                        () => {
+                            console.log("이사 확인 모달: 취소 클릭됨."); // Log for cancellation
+                        }
+                    );
+                }
+                
+                removeCurrentHouseBuffs() {
+                    const currentHouse = this.houseData.find(house => house.name === this.state.house);
+                    
+                    if (!currentHouse) return;
+                    
+                    if (currentHouse.monthly && currentHouse.monthly > 0) {
+                        this.state.monthlyExpense -= currentHouse.monthly;
+                    }
+                    
+                    if (currentHouse.buffs) {
+                        currentHouse.buffs.forEach(buff => {
+                            if (buff.includes("월 수입")) {
+                                const incomeMatch = buff.match(/(\d+)만원/);
+                                if (incomeMatch) {
+                                    const income = parseInt(incomeMatch[1]) * 10000;
+                                    this.state.monthlyIncome -= income;
+                                }
+                            }
+                        });
+                    }
+                    console.log(`현재 집 버프 제거 후 상태:`, JSON.parse(JSON.stringify(this.state)));
+                }
+                
+                applyHouseBuffs(house) {
+                    this.state.houseBuffs = house.buffs || [];
+                    
+                    if (house.monthly && house.monthly > 0) {
+                        this.state.monthlyExpense += house.monthly;
+                    }
+                    
+                    if (house.buffs) {
+                        house.buffs.forEach(buff => {
+                            if (buff.includes("신용도 +1")) {
+                                this.state.credit = Math.min(this.state.credit + 1, 4);
+                            }
+                            
+                            if (buff.includes("월 수입")) {
+                                const incomeMatch = buff.match(/(\d+)만원/);
+                                if (incomeMatch) {
+                                    const income = parseInt(incomeMatch[1]) * 10000;
+                                    this.state.monthlyIncome += income;
+                                }
+                            }
+                        });
+                    }
+                    console.log(`새로운 집 버프 적용 후 상태:`, JSON.parse(JSON.stringify(this.state)));
+                }
+                
+                updateHouseImage() {
+                    const currentHouse = this.houseData.find(house => house.name === this.state.house);
+                    const mainContent = document.getElementById('mainContent'); // Target mainContent
+                    const houseNameOverlay = document.getElementById('houseNameOverlay');
+
+                    if (currentHouse && this.houseBackgrounds[currentHouse.name]) {
+                        mainContent.style.backgroundImage = `url('${this.houseBackgrounds[currentHouse.name]}')`; // Removed linear-gradient overlay
+                    } else {
+                        mainContent.style.backgroundImage = 'none'; // Fallback to CSS linear gradient
+                    }
+                    houseNameOverlay.textContent = currentHouse ? currentHouse.name : '알 수 없음';
+                }
+                
+                showEpisode() {
+                    const episode = this.episodes[this.state.currentEpisode];
+                    const storyOverlay = document.getElementById('storyOverlay');
+                    const storyContent = document.getElementById('storyContent');
+                    const choicesGrid = document.getElementById('choicesGrid');
+                    
+                    if (this.state.currentEpisode >= this.episodes.length) {
+                        this.showEnding();
+                        return;
+                    }
+                    
+                    this.monthlyCalculation();
+                    
+                    // Check if it's the "가족의 위기" episode and if the player has moved out
+                    if (episode.title === "가족의 위기" && this.state.house !== "부모님댁") {
+                        // Replace with a "peaceful day" episode
+                        const alternativeEpisode = {
+                            title: "평화로운 일상",
+                            subtitle: "조용한 하루",
+                            text: `부모님과의 갈등은 이미 해결되었거나, 당신은 독립하여 평화로운 일상을 보내고 있습니다. 
+                                    더 이상 가족 문제로 스트레스받을 일은 없는 것 같네요.`,
+                            choices: [{ text: "계속하기 →", effect: () => "평화로운 하루가 지나갔다." }]
+                        };
+                        storyContent.innerHTML = `
+                            <div class="story-title">${alternativeEpisode.title}</div>
+                            <div class="story-subtitle">${alternativeEpisode.subtitle || ''}</div>
+                            <div class="story-text">${alternativeEpisode.text}</div>
+                            ${this.getRandomEventHTML(this.houseData.find(h => h.name === this.state.house).eventModifier)}
+                        `;
+                        choicesGrid.innerHTML = `<button class="choice-btn" onclick="game.nextEpisode()">
+                                ${alternativeEpisode.choices[0].text}
+                                </button>`;
+                        storyOverlay.style.display = 'flex';
+                        this.updateStatus(); // Update status after showing alternative episode
+                        return; // Skip normal episode processing
+                    }
+
+
+                    if (episode.isMessenger) {
+                        this.showMessenger(episode);
+                    } else {
+                        const choicesHTML = episode.choices.map((choice, index) => {
+                            return `<button class="choice-btn" onclick="game.makeChoice(${index})">
+                                ${choice.text}
+                            </button>`;
+                        }).join('');
+                        
+                        storyContent.innerHTML = `
+                            <div class="story-title">${episode.title}</div>
+                            <div class="story-subtitle">${episode.subtitle || ''}</div> <!-- Subtitle display -->
+                            <div class="story-text">${episode.text}</div>
+                            ${this.getRandomEventHTML(this.houseData.find(h => h.name === this.state.house).eventModifier)}
+                        `;
+                        choicesGrid.innerHTML = choicesHTML; // Choices are now directly in choicesGrid
+                        storyOverlay.style.display = 'flex'; // Show the story overlay
+                    }
+                    
+                    this.updateStatus();
+                    
+                    if (this.state.money < -50000000) {
+                        this.showBankruptcy();
+                    }
+                }
+                
+                monthlyCalculation() {
+                    const monthlyIncome = Number(this.state.monthlyIncome) || 0;
+                    const monthlyExpense = Number(this.state.monthlyExpense) || 0;
+                    const debt = Number(this.state.debt) || 0;
+                    
+                    this.state.money += monthlyIncome;
+                    this.state.money -= monthlyExpense;
+                    
+                    if (debt > 0) {
+                        const monthlyInterest = debt * 0.003;
+                        this.state.debt += monthlyInterest;
+                    }
+                    
+                    if (isNaN(this.state.money)) this.state.money = 0;
+                    if (isNaN(this.state.monthlyIncome)) this.state.monthlyIncome = 0;
+                    if (isNaN(this.state.monthlyExpense)) this.state.monthlyExpense = 30000;
+                    if (isNaN(this.state.debt)) this.state.debt = 0;
+                    console.log("월별 계산 완료. 현재 자산:", this.state.money.toLocaleString(), "빚:", this.state.debt.toLocaleString());
+                }
+                
+                async showMessenger(episode) { // Added async
+                    const modal = document.getElementById('kakaoModal');
+                    const messagesContainer = document.getElementById('kakaoMessages');
+                    const choices = document.getElementById('kakaoChoices');
+                    
+                    messagesContainer.innerHTML = ''; // Clear previous messages
+                    choices.innerHTML = ''; // Clear previous choices
+
+                    modal.style.visibility = 'visible'; // Make it visible
+                    modal.classList.add('show'); // Trigger opacity transition
+                    
+                    // Display messages one by one with a delay
+                    for (let i = 0; i < episode.messages.length; i++) {
+                        const msg = episode.messages[i];
+                        const senderName = msg.sender !== '나' ? `<div class="sender-name">${msg.sender}</div>` : '';
+                        const messageBubble = `<div class="message-bubble">${msg.text}</div>`;
+                        const timestamp = `<div class="timestamp">${new Date().getHours()}:${new Date().getMinutes().toString().padStart(2, '0')}</div>`;
+                        
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `kakao-message ${msg.sender === '나' ? 'sent' : 'received'}`;
+                        messageDiv.innerHTML = senderName + messageBubble + timestamp;
+                        
+                        messagesContainer.appendChild(messageDiv);
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Scroll to bottom
+
+                        if (msg.sender !== '나' && i < episode.messages.length - 1) { // Show typing indicator for incoming messages
+                            const typingIndicator = document.createElement('div');
+                            typingIndicator.className = 'kakao-message received';
+                            typingIndicator.innerHTML = `<div class="sender-name">${episode.messages[i+1].sender}</div><div class="message-bubble">...</div>`;
+                            messagesContainer.appendChild(typingIndicator);
+                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            await new Promise(resolve => setTimeout(resolve, 1500)); // Typing delay
+                            messagesContainer.removeChild(typingIndicator); // Remove typing indicator
+                        } else {
+                            await new Promise(resolve => setTimeout(resolve, 800)); // Delay after own message
+                        }
+                    }
+
+                    // Show choices after all messages are displayed
+                    const choicesHTML = episode.choices.map((choice, index) => {
+                        return `<button class="choice-btn" onclick="game.makeKakaoChoice(${index})" style="margin: 5px 0; font-size: 0.9em;">
+                            ${choice.text}
+                        </button>`;
+                    }).join('');
+                    choices.innerHTML = choicesHTML;
+                    this.currentMessengerEpisode = episode;
+                }
+                
+                makeKakaoChoice(choiceIndex) {
+                    const choice = this.currentMessengerEpisode.choices[choiceIndex];
+                    const result = choice.effect();
+                    
+                    const modal = document.getElementById('kakaoModal');
+                    modal.classList.remove('show');
+                    setTimeout(() => {
+                        modal.style.visibility = 'hidden';
+                        this.showResult(result);
+                    }, 300); // Match CSS transition duration
+                }
+                
+                closeKakao() {
+                    const modal = document.getElementById('kakaoModal');
+                    modal.classList.remove('show');
+                    setTimeout(() => {
+                        modal.style.visibility = 'hidden';
+                    }, 300); // Match CSS transition duration
+                }
+                
+                getRandomEventHTML(modifier = 0) {
+                    const currentHouse = this.houseData.find(h => h.name === this.state.house);
+                    const eventModifier = currentHouse ? currentHouse.eventModifier : 0; // Get modifier from current house
+                
+                    const randomVal = Math.random();
+                    let eventChance = 0.08; // Base 8% chance for any event
+                    let positiveChance = 0.5 + eventModifier; // Base 50% chance for positive event, modified by house
+
+                    if (randomVal < eventChance) {
+                        const events = [
+                            { text: "복권 당첨!", money: 5000000, type: "positive" },
+                            { text: "자동차 사고 발생", money: -3000000, type: "negative" },
+                            { text: "핸드폰 분실", money: -1200000, type: "negative" },
+                            { text: "갑작스런 병원비", money: -2500000, type: "negative" },
+                            { text: "부업 성공", money: 2000000, type: "positive" },
+                            { text: "친구 결혼식", money: -300000, type: "neutral" }
+                        ];
+                        
+                        let filteredEvents;
+                        if (Math.random() < positiveChance) {
+                            filteredEvents = events.filter(e => e.type === "positive" || e.type === "neutral");
+                        } else {
+                            filteredEvents = events.filter(e => e.type === "negative" || e.type === "neutral");
+                        }
+                        
+                        const event = filteredEvents[Math.floor(Math.random() * filteredEvents.length)];
+                        this.state.money += event.money;
+                        console.log(`돌발 이벤트 발생: ${event.text}, ${event.money > 0 ? '+' : ''}${event.money.toLocaleString()}원`);
+                        
+                        return `<div class="random-event">
+                            ⚡️ 돌발 상황! ⚡️<br>
+                            ${event.text}<br>
+                            ${event.money > 0 ? '+' : ''}${event.money.toLocaleString()}원
+                        </div>`;
+                    }
+                    return '';
+                }
+                
+                makeChoice(choiceIndex) {
+                    const episode = this.episodes[this.state.currentEpisode];
+                    const choice = episode.choices[choiceIndex];
+                    const result = choice.effect();
+                    
+                    document.getElementById('storyOverlay').style.display = 'none';
+                    this.showResult(result);
+                }
+                
+                showResult(result) {
+                    const choicesGrid = document.getElementById('choicesGrid');
+                    const storyOverlay = document.getElementById('storyOverlay');
+                    const storyContent = document.getElementById('storyContent');
+                    
+                    if (this.forcedHouseMove) {
+                        storyContent.innerHTML = `
+                            <div class="result-screen">
+                                <div class="result-title" style="color: #dc3545;">긴급 상황!</div>
+                                <div class="result-text">${result}</div>
+                                ${this.state.debt > 0 ? `<div style="color: #dc3545; font-weight: 600; margin: 10px 0;">💳 현재 빚: ${this.state.debt.toLocaleString()}원</div>` : ''}
+                                <div style="background: #fff3cd; border: 2px solid #ffeaa7; padding: 15px; border-radius: 16px; margin: 20px 0; color: #856404;">
+                                    <strong>⚠️ 부모님댁에서 나가야 합니다!</strong><br>
+                                    새로운 거주지를 선택해주세요.
+                                </div>
+                            </div>
+                        `;
+                        choicesGrid.innerHTML = `<button class="continue-btn" onclick="game.showPage('housePage')">
+                                🏠 집 구하러 가기
+                                </button>`;
+                        storyOverlay.style.display = 'flex';
+                        this.updateStatus(); // Update status after showing forced move result
+                        return;
+                    }
+                    
+                    storyContent.innerHTML = `
+                        <div class="result-screen">
+                            <div class="result-title">결과</div>
+                            <div class="result-text">${result}</div>
+                            ${this.state.debt > 0 ? `<div style="color: #dc3545; font-weight: 600; margin: 10px 0;">💳 현재 빚: ${this.state.debt.toLocaleString()}원</div>` : ''}
+                        </div>
+                    `;
+                    choicesGrid.innerHTML = `<button class="continue-btn" onclick="game.nextEpisode()">
+                                
+                                계속하기 → (${this.state.age + 1}세)
+                            </button>`;
+                    storyOverlay.style.display = 'flex';
+                    this.updateStatus();
+                }
+                
+                nextEpisode() {
+                    document.getElementById('storyOverlay').style.display = 'none'; // Hide result overlay
+                    this.state.currentEpisode++;
+                    this.state.age++;
+                    console.log(`다음 에피소드 진행. 현재 에피소드: ${this.state.currentEpisode}, 나이: ${this.state.age}`);
+                    this.showEpisode();
+                }
+                
+                showBankruptcy() {
+                    console.log("파산 엔딩 진입!");
+                    const storyOverlay = document.getElementById('storyOverlay');
+                    const storyContent = document.getElementById('storyContent');
+                    const choicesGrid = document.getElementById('choicesGrid');
+
+                    storyContent.innerHTML = `
+                        <div class="ending-screen">
+                            <div class="ending-title" style="color: #dc3545;">💸 파산!</div>
+                            <div class="ending-text">
+                                빚이 너무 많이 쌓여 파산하게 되었습니다...<br>
+                                최종 부채: <strong>${Math.abs(this.state.money).toLocaleString()}원</strong><br>
+                                나이: <strong>${this.state.age}세</strong><br><br>
+                                인생은 한 번의 실패로 끝나지 않습니다!
+                            </div>
+                        </div>
+                    `;
+                    choicesGrid.innerHTML = `<button class="continue-btn" onclick="location.reload()">새로운 인생 시작</button>`;
+                    storyOverlay.style.display = 'flex';
+                    this.updateHouseImage("파산"); // Set bankruptcy background
+                    this.updateStatus(); // Update status for bankruptcy
+                }
+                
+                showEnding() {
+                    console.log("엔딩 진입. 최종 상태:", JSON.parse(JSON.stringify(this.state)));
+                    const netWorth = this.state.money - this.state.debt;
+                    
+                    let mainEnding = { title: "", text: "", backgroundKey: "" };
+                    let epilogueMessages = [];
+
+                    // 1. Perfect Ending (강남 300평 부자 엔딩)
+                    if (netWorth >= this.targetMoney && this.state.house === "강남 300평 豪宅") {
+                        mainEnding.title = "🏆 퍼펙트 엔딩: 강남 300평 부자!";
+                        mainEnding.text = `당신은 마침내 꿈의 강남 300평 대저택을 소유하며 500억 자산 목표를 달성했습니다! 진정한 자수성가 신화의 주인공이 되었습니다.`;
+                        mainEnding.backgroundKey = "성공"; // Perfect Ending Image
+                    }
+                    // 2. Good Ending (직장인 월급쟁이 엔딩)
+                    else if (this.state.careerLevel >= 8 && netWorth >= 1000000000 && netWorth < this.targetMoney) { // 10억 이상 500억 미만
+                        mainEnding.title = "💼 굿 엔딩: 성공한 직장인!";
+                        mainEnding.text = `당신은 대기업 임원 또는 성공적인 투자자로 안정적인 삶을 살게 되었습니다. 비록 500억 목표에는 미치지 못했지만, 충분히 성공적인 인생입니다.`;
+                        mainEnding.backgroundKey = "굿 엔딩"; // Good Ending Image
+                    }
+                    // 3. Normal Ending (SNS 거짓말 엔딩)
+                    else if (netWorth > 0 && netWorth < 1000000000) { // 0원 초과 10억 미만
+                        mainEnding.title = "😊 노말 엔딩: 평범한 삶, 작은 욕망";
+                        mainEnding.text = `당신은 평범하지만 안정적인 삶을 살고 있습니다. 가끔 SNS에 친구들의 화려한 삶을 보며 부러워하고, 시그니엘에 사는 것처럼 거짓으로 올리기도 합니다.`;
+                        mainEnding.backgroundKey = "노말 엔딩"; // Normal Ending Image
+                    }
+                    // 4. Bankruptcy (Bad Ending) - Should ideally be caught by showBankruptcy() earlier, but as a fallback
+                    else {
+                        mainEnding.title = "💸 파산 엔딩: 절망의 끝";
+                        mainEnding.text = `당신은 빚더미에 앉아 모든 것을 잃었습니다. 재기의 기회를 엿보지만 현실은 냉혹합니다.`;
+                        mainEnding.backgroundKey = "파산"; // Bankruptcy Ending Image
+                    }
+
+                    // Add Epilogues (Sub Endings)
+                    // Marriage Epilogue Condition: monthlyExpense increased due to dating (from choice 5) AND age is reasonable for marriage AND random chance
+                    if (this.state.monthlyExpense >= 230000 && this.state.age < 40 && Math.random() < 0.5) {
+                        epilogueMessages.push({
+                            title: "❤️ 에필로그: 운명적인 만남과 결혼!",
+                            text: "당신은 멋진 배우자를 만나 행복한 가정을 꾸렸습니다.",
+                            backgroundKey: "결혼 에필로그"
+                        });
+                    }
+
+                    // Stock Investment Success Epilogue Condition: successfulInvestments >> failedInvestments AND random chance
+                    if (this.state.successfulInvestments > this.state.failedInvestments && this.state.successfulInvestments >= 2 && Math.random() < 0.3) {
+                        epilogueMessages.push({
+                            title: "📈 에필로그: 주식 대성공 신화!",
+                            text: "당신은 투자 감각을 살려 은퇴 후에도 막대한 부를 축적했습니다.",
+                            backgroundKey: "주식 대성공 에필로그"
+                        });
+                    }
+
+                    // Prepare carousel pages
+                    this.endingPages = [];
+                    this.endingPages.push({
+                        title: mainEnding.title,
+                        text: mainEnding.text + `<br><br>최종 순자산: <strong>${netWorth.toLocaleString()}원</strong><br>나이: <strong>${this.state.age}세</strong><br>거주지: <strong>${this.state.house}</strong>`,
+                        backgroundKey: mainEnding.backgroundKey
+                    });
+
+                    epilogueMessages.forEach(epilogue => this.endingPages.push(epilogue));
+
+                    this.currentEndingPageIndex = 0;
+                    document.getElementById('endingCarousel').style.display = 'flex'; // Show carousel
+                    this.displayEndingCarouselPage();
+                }
+
+                displayEndingCarouselPage() {
+                    const endingCarousel = document.getElementById('endingCarousel');
+                    const carouselContent = document.getElementById('carouselContent');
+                    const carouselIndicator = document.getElementById('carouselIndicator');
+                    const page = this.endingPages[this.currentEndingPageIndex];
+
+                    carouselContent.innerHTML = `
+                        <div class="ending-screen">
+                            <div class="ending-title" style="color: ${page.backgroundKey === "파산" ? '#dc3545' : page.backgroundKey === "성공" ? '#ffc107' : '#667eea'};">${page.title}</div>
+                            <div class="ending-text">${page.text}</div>
+                        </div>
+                        <button class="continue-btn" onclick="location.reload()">다시 도전하기</button>
+                    `;
+                    
+                    endingCarousel.style.backgroundImage = `url('${this.houseBackgrounds[page.backgroundKey]}')`;
+                    
+                    carouselIndicator.textContent = `${this.currentEndingPageIndex + 1} / ${this.endingPages.length}`;
+
+                    // Show/hide navigation buttons
+                    document.querySelector('.carousel-nav-btn.left').style.display = this.currentEndingPageIndex > 0 ? 'block' : 'none';
+                    document.querySelector('.carousel-nav-btn.right').style.display = this.currentEndingPageIndex < this.endingPages.length - 1 ? 'block' : 'none';
+                }
+
+                navigateEndingCarousel(direction) {
+                    this.currentEndingPageIndex += direction;
+                    if (this.currentEndingPageIndex < 0) {
+                        this.currentEndingPageIndex = 0;
+                    } else if (this.currentEndingPageIndex >= this.endingPages.length) {
+                        this.currentEndingPageIndex = this.endingPages.length - 1;
+                    }
+                    this.displayEndingCarouselPage();
+                }
+                
+                updateStatus() {
+                    document.getElementById('money').textContent = `${this.state.money.toLocaleString()}원`;
+                    document.getElementById('debt').textContent = `${this.state.debt.toLocaleString()}원`;
+                    document.getElementById('career').textContent = this.careerLevels[this.state.careerLevel];
+                    document.getElementById('house').textContent = this.state.house;
+                    document.getElementById('episode').textContent = `${this.state.currentEpisode + 1}/${this.episodes.length}`;
+                    console.log("상태 업데이트 완료:", JSON.parse(JSON.stringify(this.state)));
+                }
+
+                loadAssetPage() {
+                    const assetContent = document.getElementById('assetContent');
+                    const netWorth = this.state.money - this.state.debt;
+                    const monthlyNet = this.state.monthlyIncome - this.state.monthlyExpense;
+                    const progressPercent = Math.max(0, Math.min(((netWorth / this.targetMoney) * 100), 100));
+                    
+                    assetContent.innerHTML = `
+                        <div class="asset-card">
+                            <div class="asset-title">🎯 목표 달성률</div>
+                            <div class="progress-chart">
+                                <div style="text-align: center; margin-bottom: 8px; color: #6c757d; font-size: 0.9em;">
+                                    ${progressPercent.toFixed(1)}%
+                                </div>
+                                <div class="chart-bar">
+                                    <div class="chart-fill" style="width: ${progressPercent}%"></div>
+                                </div>
+                                <div style="text-align: center; margin-top: 8px; color: #6c757d; font-size: 0.85em;">
+                                    目標: ${this.targetMoney.toLocaleString()}원<br>
+                                    現在: ${netWorth.toLocaleString()}원
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="asset-card">
+                            <div class="asset-title">💰 자산 현황</div>
+                            <div class="asset-grid">
+                                <div class="asset-item asset-positive">
+                                    <div class="asset-value">${this.state.money.toLocaleString()}원</div>
+                                    <div class="asset-label">총 자산</div>
+                                </div>
+                                <div class="asset-item asset-negative">
+                                    <div class="asset-value">${this.state.debt.toLocaleString()}원</div>
+                                    <div class="asset-label">총 부채</div>
+                                </div>
+                            </div>
+                            <div class="net-worth ${netWorth >= 0 ? 'positive' : 'negative'}">
+                                <div class="asset-value">${netWorth.toLocaleString()}원</div>
+                                <div class="asset-label">순자산</div>
+                            </div>
+                        </div>
+
+                        <div class="asset-card">
+                            <div class="asset-title">💸 월간 수지</div>
+                            <div class="asset-grid">
+                                <div class="asset-item asset-positive">
+                                    <div class="asset-value">${this.state.monthlyIncome.toLocaleString()}원</div>
+                                    <div class="asset-label">월 수입</div>
+                                </div>
+                                <div class="asset-item asset-negative">
+                                    <div class="asset-value">${this.state.monthlyExpense.toLocaleString()}원</div>
+                                    <div class="asset-label">월 지출</div>
+                                </div>
+                            </div>
+                            <div class="net-worth ${monthlyNet >= 0 ? 'positive' : 'negative'}">
+                                <div class="asset-value">${monthlyNet.toLocaleString()}원</div>
+                                <div class="asset-label">월 순수익</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }(); // Immediately invoke the class to create a global instance
+        });
+    </script>
+</body>
+</html>
+�
